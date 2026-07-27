@@ -1,0 +1,16 @@
+CS 513 — Team 38 — Data Links  [Team]
+
+Charlene Khun   ckhun2@illinois.edu
+Madalyn Killian killian7@illinois.edu
+Po Lin          pohungl2@illinois.edu
+
+Dataset: NYPL "What's on the Menu?" (Menu.csv, MenuPage.csv, MenuItem.csv, Dish.csv)
+
+Original ("dirty") dataset D:
+  <Box link — TODO>
+
+Cleaned dataset D':
+  <Box link — TODO>
+
+Verify both links resolve for someone outside the team before submitting: the Box
+folder must be shared, not private.

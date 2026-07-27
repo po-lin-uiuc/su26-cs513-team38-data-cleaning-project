@@ -1,0 +1,36 @@
+# --- Data ---------------------------------------------------------------
+# Datasets are shared via Box, not git (see data/README.md and the course
+# instructions: do not include datasets in the supplementary ZIP).
+data/**
+!data/**/
+!data/README.md
+!data/**/.gitkeep
+
+# --- Python -------------------------------------------------------------
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+*.egg-info/
+.ipynb_checkpoints/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# --- OpenRefine ---------------------------------------------------------
+# The local workspace is machine-specific; only the exported history is tracked.
+*.openrefine.tar.gz
+openrefine/workspace/
+
+# --- Editors / OS -------------------------------------------------------
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+ehthumbs.db
+.DS_Store
+
+# --- Local secrets / connection settings --------------------------------
+.env
+*.local.ini

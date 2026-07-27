@@ -1,0 +1,40 @@
+-- S3 Step 7 — Integrity and domain constraint checks (IC).
+-- Owner: Charlene Khun  [CharleneKhun]
+-- Checklist: docs/checklists/charlene-khun.md  (Step 7)
+-- Rule catalog: docs/cleaning-rules.md
+-- Problems: docs/data-quality-problems.md  (P1-P10)
+--
+-- Run:  sqlite3 data/cs513_team38.sqlite < sql/03_validate_ic.sql
+--
+-- FORM
+--   One query per rule, each returning the VIOLATING rows, so an empty result
+--   means the constraint holds. Give every rule an ID (IC-1, IC-2, ...) and a
+--   plain-English statement, and state it as a denial constraint. Include the
+--   source identifiers (id, source_row_num) in the output so Step 8 can trace a
+--   violation back to its raw row.
+--
+--   Run every check against staging loaded from RAW as well as from cleaned data.
+--   Without the "before" run there is no before/after comparison, and the rubric
+--   asks for exactly that difference.
+--
+-- COVERAGE EXPECTED (see the checklist for the full list)
+--   Menu           eligibility, cleaned_year validity and range, status_clean and
+--                  currency_clean controlled domains
+--   MenuItem       item ID present, cleaned price numeric and positive,
+--                  price_source domain, cleaning_status domain, excluded rows
+--                  carry an exclusion_reason, warned rows carry a warning_reason
+--   Price rules    highest >= lowest; high_price vs price if adopted as a rule;
+--                  fallback averages use two valid components
+--   Eligibility    complete menus only, valid date, comparable currency, valid
+--                  final price, minimum valid-item threshold if adopted
+--
+-- SQLITE NOTES
+--   - No REGEXP by default. Use GLOB (e.g. '*[A-Za-z]*') or LIKE for pattern
+--     checks such as "a dish name must contain at least one letter".
+--   - typeof(col) reveals what SQLite actually stored, which is how you check that
+--     a cleaned numeric column really holds numbers.
+--
+-- Export violations to data/reports/validation_ic_results.csv, record counts, and
+-- add the queries to queries.txt.
+
+-- TODO [CharleneKhun]: IC rules

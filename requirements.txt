@@ -1,0 +1,12 @@
+# CS 513 Team 38 — cleaning pipeline dependencies.
+# Pin on first successful run (pip freeze) so results stay reproducible.
+pandas
+numpy
+
+# Notebook profiling (notebooks/)
+jupyterlab
+matplotlib
+
+# SQLite needs no driver — Python's stdlib `sqlite3` module covers it.
+# The sqlite3 *CLI* (needed for .import / .mode dot commands) is a separate
+# install on Windows: winget install SQLite.SQLite

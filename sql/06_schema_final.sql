@@ -1,0 +1,35 @@
+-- S3 Step 9 — final operational tables (D') for U1.
+-- Owner: Po Lin  [PoLin]
+-- Checklist: docs/checklists/po-lin.md  (Step 9)
+--
+-- Run:  sqlite3 data/cs513_team38.sqlite < sql/06_schema_final.sql
+--
+-- WHAT THIS FILE MUST CONTAIN
+--   final_menu  menu_id, cleaned_year, currency_clean, status_clean
+--               one row per menu, menu_id unique, U1-eligible menus only (or a
+--               clear eligibility flag)
+--   final_item  menu_item_id, menu_id, menu_page_id, dish_id, clean_item_price,
+--               price_source, plus the raw and dish-level prices kept for
+--               provenance. Every item must reference a final menu, have a valid
+--               positive price, and exactly one price source.
+--   The population statements (SQL or Python), and the U1 demonstration query.
+--
+-- UNLIKE STAGING, THESE TABLES SHOULD BE CONSTRAINED
+--   Rows only reach here after Step 7 passes, so PK/FK/NOT NULL/CHECK failures
+--   mean the cleaning loop is not finished -- go back to Step 8. Consider STRICT
+--   tables here even if staging is not STRICT, and note that STRICT permits only
+--   INT, INTEGER, REAL, TEXT, BLOB, ANY -- so a price column is REAL, which is
+--   binary floating point and not exact currency.
+--
+-- U1 READINESS (the payoff -- see the checklist for the full list)
+--   Count valid items per menu, define the minimum threshold, compute average
+--   cleaned price per menu, group into comparable time periods, confirm the
+--   currencies within a group are comparable, and produce the $/$$/$$$/$$$$
+--   categorization. Tiers must be relative to a menu's OWN period, which is what
+--   makes this U1 rather than a global ranking.
+--
+--   Then run the equivalent query against raw D and compare. The menus that
+--   change tier -- and those that could not be tiered at all -- are the evidence
+--   that cleaning was necessary and that D' is fit for purpose.
+
+-- TODO [PoLin]: final DDL, population, U1 demonstration query

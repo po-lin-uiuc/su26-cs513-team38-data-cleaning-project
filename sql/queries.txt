@@ -1,0 +1,13 @@
+CS 513 — Team 38 — Supplementary deliverable: queries.txt  [Team]
+
+Required contents: all SQL/Datalog queries used to profile the dataset and check
+integrity constraints.
+
+DO NOT hand-edit this file. Generate it from sql/*.sql at submission time so it
+cannot drift from the queries actually run:
+
+    Get-ChildItem sql\0*.sql | ForEach-Object {
+        "-- ===== $($_.Name) =====", (Get-Content $_.FullName -Raw)
+    } | Set-Content sql\queries.txt
+
+Then copy it into deliverables/phase2/supplementary/.

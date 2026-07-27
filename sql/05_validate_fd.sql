@@ -1,0 +1,30 @@
+-- S3 Step 7 — Functional dependency checks (FD).
+-- Owner: Po Lin  [PoLin]
+-- Checklist: docs/checklists/po-lin.md  (Step 7)
+--
+-- Run:  sqlite3 data/cs513_team38.sqlite < sql/05_validate_fd.sql
+--
+-- An FD X -> Y holds when every distinct X maps to exactly one Y. Each query
+-- should return the X values with more than one distinct Y; empty means it holds.
+--
+-- FDs TO CHECK
+--   Menu.id     -> cleaned_year, currency_clean, status_clean
+--   MenuPage.id -> menu_id
+--   MenuItem.id -> menu_page_id, dish_id, cleaned price fields
+--   Dish.id     -> cleaned name, cleaned lowest price, cleaned highest price
+--
+-- THINGS THE CHECKLIST ASKS YOU TO GET RIGHT
+--   - Distinguish a genuine FD violation (one ID carrying conflicting cleaned
+--     values) from duplicate identical rows (same ID, same values, loaded twice).
+--     Both look like COUNT(*) > 1, but the first is a cleaning-rule problem and
+--     the second is a load problem for Madalyn.
+--   - COUNT(DISTINCT col) ignores NULLs, so a column that is NULL in one row and
+--     set in another counts as 1 distinct value, not 2. Decide whether that
+--     should hide a conflict or surface as one.
+--   - Confirm the FD definitions match the actual staging schema before running.
+--   - Compare violation counts across iterations, and hand the exports to Madalyn
+--     for Step 8.
+--
+-- Export to data/reports/validation_fd_results.csv and add to queries.txt.
+
+-- TODO [PoLin]: FD rules

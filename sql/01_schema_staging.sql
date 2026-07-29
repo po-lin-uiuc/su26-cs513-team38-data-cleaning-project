@@ -46,14 +46,14 @@ CREATE TABLE stg_menu(
     -- location_type varchar,
     currency varchar,
     -- currency_symbol varchar,
-    status varchar,
+    status varchar
     -- page_count varchar,
     -- dish_count varchar
 );
 
 CREATE TABLE stg_menu_page(
     id int PRIMARY KEY,
-    menu_id int NOT NULL,
+    menu_id int NOT NULL
     -- page_number varchar,
     -- image_id varchar,
     -- full_height varchar,
@@ -66,7 +66,7 @@ CREATE TABLE stg_menu_item(
     menu_page_id int NOT NULL,
     price float,
     high_price float,
-    dish_id int,
+    dish_id int
     -- created_at varchar,
     -- updated_at varchar,
     -- xpos varchar,
@@ -82,5 +82,5 @@ CREATE TABLE stg_dish(
     -- first_appeared varchar,
     -- last_appeared varchar,
     lowest_price float NOT NULL,
-    highest_price float NOT NULL,
+    highest_price float NOT NULL
 );

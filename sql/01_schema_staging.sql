@@ -27,3 +27,60 @@
 -- Record every later revision in docs/iteration-log.md (schema revision log).
 
 -- TODO [MadalynKillian]: staging DDL
+
+CREATE TABLE stg_menu(
+    id int PRIMARY KEY,
+    -- name varchar,
+    -- spnsor varchar, varchar,
+    -- event varchar,
+    -- venue varchar,
+    -- place varchar,
+    -- physical_description varchar,
+    -- occasion varchar,
+    -- notes varchar,
+    -- call_number varchar,
+    -- keywords varchar,
+    -- language varchar,
+    date datetime,
+    -- location varchar,
+    -- location_type varchar,
+    currency varchar,
+    -- currency_symbol varchar,
+    status varchar,
+    -- page_count varchar,
+    -- dish_count varchar
+);
+
+CREATE TABLE stg_menu_page(
+    id int PRIMARY KEY,
+    menu_id int NOT NULL,
+    -- page_number varchar,
+    -- image_id varchar,
+    -- full_height varchar,
+    -- full_width varchar,
+    -- uuid varchar
+);
+
+CREATE TABLE stg_menu_item(
+    id int PRIMARY KEY,
+    menu_page_id int NOT NULL,
+    price float,
+    high_price float,
+    dish_id int,
+    -- created_at varchar,
+    -- updated_at varchar,
+    -- xpos varchar,
+    -- ypos varchar
+);
+
+CREATE TABLE stg_dish(
+    id int PRIMARY KEY,
+    name varchar,
+    -- description varchar,
+    -- menus_appeared varchar,
+    -- times_appeared varchar,
+    -- first_appeared varchar,
+    -- last_appeared varchar,
+    lowest_price float NOT NULL,
+    highest_price float NOT NULL,
+);

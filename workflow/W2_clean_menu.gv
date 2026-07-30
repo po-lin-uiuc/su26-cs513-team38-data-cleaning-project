@@ -1,0 +1,50 @@
+digraph Workflow {
+rankdir=TB
+fontname=Helvetica; fontsize=18; labelloc=t
+label="cleaning_workflow_W2.clean_menu"
+subgraph cluster_workflow_box_outer { label=""; color=black; penwidth=2
+subgraph cluster_workflow_box_inner { label=""; penwidth=0
+node[shape=box style=filled fillcolor="#CCFFCC" peripheries=1 fontname=Helvetica]
+clean_menu_identifiers [shape=record rankdir=LR label="{<f0> clean_menu_identifiers |<f1> Writes\: Menu_after_id-numeric.csv, Menu_summary_id-numeric.csv}"];
+clean_menu_dates [shape=record rankdir=LR label="{<f0> clean_menu_dates |<f1> Writes\: Menu_after_date-split.csv, Menu_summary_date-split.csv}"];
+clean_menu_currency [shape=record rankdir=LR label="{<f0> clean_menu_currency |<f1> Writes\: Menu_after_currency-map.csv, Menu_changes_currency-map.csv}"];
+clean_menu_status [shape=record rankdir=LR label="{<f0> clean_menu_status |<f1> Writes\: Menu_after_drop-status.csv, Menu_summary_drop-status.csv}"];
+write_menu_cleaned [shape=record rankdir=LR label="{<f0> write_menu_cleaned |<f1> Writes\: Menu_cleaned.csv}"];
+node[shape=box style="rounded,filled" fillcolor="#FFFFCC" peripheries=1 fontname=Helvetica]
+menu_cleaned [shape=record rankdir=LR label="{<f0> menu_cleaned |<f1> file\:data/menu/interim/cleaned/Menu_cleaned.csv}"];
+menu_or [shape=record rankdir=LR label="{<f0> menu_or |<f1> file\:data/menu/interim/open-refine/Menu_OR.csv}"];
+menu_ids [shape=record rankdir=LR label="{<f0> menu_ids |<f1> file\:data/menu/interim/func-id-numeric/Menu_after_id-numeric.csv}"];
+menu_dates [shape=record rankdir=LR label="{<f0> menu_dates |<f1> file\:data/menu/interim/func-date-split/Menu_after_date-split.csv}"];
+menu_currency [shape=record rankdir=LR label="{<f0> menu_currency |<f1> file\:data/menu/interim/func-currency-map/Menu_after_currency-map.csv}"];
+menu_status [shape=record rankdir=LR label="{<f0> menu_status |<f1> file\:data/menu/interim/func-drop-status/Menu_after_drop-status.csv}"];
+node[shape=box style="rounded,filled" fillcolor="#FCFCFC" peripheries=1 fontname=Helvetica]
+clean_menu_identifiers -> menu_ids
+menu_or -> clean_menu_identifiers
+NULL_LIKE_VALUES -> clean_menu_identifiers
+clean_menu_dates -> menu_dates
+menu_ids -> clean_menu_dates
+MIN_PLAUSIBLE_YEAR -> clean_menu_dates
+MAX_PLAUSIBLE_YEAR -> clean_menu_dates
+DATE_PART_COLUMNS -> clean_menu_dates
+clean_menu_currency -> menu_currency
+menu_dates -> clean_menu_currency
+CURRENCY_MAP -> clean_menu_currency
+clean_menu_status -> menu_status
+menu_currency -> clean_menu_status
+write_menu_cleaned -> menu_cleaned
+menu_status -> write_menu_cleaned
+PROVENANCE_COLUMNS -> write_menu_cleaned
+}}
+subgraph cluster_input_ports_group_outer { label=""; penwidth=0
+subgraph cluster_input_ports_group_inner { label=""; penwidth=0
+node[shape=circle style="rounded,filled" fillcolor="#FFFFFF" peripheries=1 fontname=Helvetica width=0.2]
+menu_or_input_port [label=""]
+}}
+subgraph cluster_output_ports_group_outer { label=""; penwidth=0
+subgraph cluster_output_ports_group_inner { label=""; penwidth=0
+node[shape=circle style="rounded,filled" fillcolor="#FFFFFF" peripheries=1 fontname=Helvetica width=0.2]
+menu_cleaned_output_port [label=""]
+}}
+menu_or_input_port -> menu_or
+menu_cleaned -> menu_cleaned_output_port
+}

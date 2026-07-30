@@ -1,0 +1,55 @@
+digraph Workflow {
+rankdir=TB
+fontname=Helvetica; fontsize=18; labelloc=t
+label="cleaning_workflow_W2.clean_dish"
+subgraph cluster_workflow_box_outer { label=""; color=black; penwidth=2
+subgraph cluster_workflow_box_inner { label=""; penwidth=0
+node[shape=box style=filled fillcolor="#CCFFCC" peripheries=1 fontname=Helvetica]
+clean_dish_identifiers [shape=record rankdir=LR label="{<f0> clean_dish_identifiers |<f1> Writes\: Dish_after_id-numeric.csv, Dish_summary_id-numeric.csv}"];
+clean_dish_names [shape=record rankdir=LR label="{<f0> clean_dish_names |<f1> Writes\: Dish_after_dish-name.csv, Dish_changes_dish-name.csv}"];
+clean_dish_prices [shape=record rankdir=LR label="{<f0> clean_dish_prices |<f1> Writes\: Dish_after_price-decimal.csv, Dish_summary_price-decimal.csv}"];
+clean_dish_price_outliers [shape=record rankdir=LR label="{<f0> clean_dish_price_outliers |<f1> Writes\: Dish_after_price-outlier.csv, Dish_changes_price-outlier.csv}"];
+write_dish_cleaned [shape=record rankdir=LR label="{<f0> write_dish_cleaned |<f1> Writes\: Dish_cleaned.csv}"];
+node[shape=box style="rounded,filled" fillcolor="#FFFFCC" peripheries=1 fontname=Helvetica]
+dish_cleaned [shape=record rankdir=LR label="{<f0> dish_cleaned |<f1> file\:data/dish/interim/cleaned/Dish_cleaned.csv}"];
+dish_or [shape=record rankdir=LR label="{<f0> dish_or |<f1> file\:data/dish/interim/open-refine/Dish_OR.csv}"];
+dish_ids [shape=record rankdir=LR label="{<f0> dish_ids |<f1> file\:data/dish/interim/func-id-numeric/Dish_after_id-numeric.csv}"];
+dish_names [shape=record rankdir=LR label="{<f0> dish_names |<f1> file\:data/dish/interim/func-dish-name/Dish_after_dish-name.csv}"];
+dish_prices [shape=record rankdir=LR label="{<f0> dish_prices |<f1> file\:data/dish/interim/func-price-decimal/Dish_after_price-decimal.csv}"];
+dish_capped [shape=record rankdir=LR label="{<f0> dish_capped |<f1> file\:data/dish/interim/func-price-outlier/Dish_after_price-outlier.csv}"];
+node[shape=box style="rounded,filled" fillcolor="#FCFCFC" peripheries=1 fontname=Helvetica]
+clean_dish_identifiers -> dish_ids
+dish_or -> clean_dish_identifiers
+NULL_LIKE_VALUES -> clean_dish_identifiers
+clean_dish_names -> dish_names
+dish_ids -> clean_dish_names
+DISH_NAME_ALLOWED -> clean_dish_names
+DISH_NAME_SEPARATORS -> clean_dish_names
+DISH_NAME_REPLACEMENTS -> clean_dish_names
+DISH_NAME_QUOTE_MAP -> clean_dish_names
+DISH_NAME_UNKNOWN -> clean_dish_names
+clean_dish_prices -> dish_prices
+dish_names -> clean_dish_prices
+PRICE_FORMAT -> clean_dish_prices
+PRICE_DECIMAL_PLACES -> clean_dish_prices
+clean_dish_price_outliers -> dish_capped
+dish_prices -> clean_dish_price_outliers
+WINSORIZE_UPPER_LIMIT -> clean_dish_price_outliers
+WINSORIZE_COLUMNS -> clean_dish_price_outliers
+write_dish_cleaned -> dish_cleaned
+dish_capped -> write_dish_cleaned
+PROVENANCE_COLUMNS -> write_dish_cleaned
+}}
+subgraph cluster_input_ports_group_outer { label=""; penwidth=0
+subgraph cluster_input_ports_group_inner { label=""; penwidth=0
+node[shape=circle style="rounded,filled" fillcolor="#FFFFFF" peripheries=1 fontname=Helvetica width=0.2]
+dish_or_input_port [label=""]
+}}
+subgraph cluster_output_ports_group_outer { label=""; penwidth=0
+subgraph cluster_output_ports_group_inner { label=""; penwidth=0
+node[shape=circle style="rounded,filled" fillcolor="#FFFFFF" peripheries=1 fontname=Helvetica width=0.2]
+dish_cleaned_output_port [label=""]
+}}
+dish_or_input_port -> dish_or
+dish_cleaned -> dish_cleaned_output_port
+}

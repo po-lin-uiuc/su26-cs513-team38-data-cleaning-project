@@ -10,18 +10,54 @@ Owner: **Po Lin** (Step 4)  [PoLin]. Checklist: [../docs/checklists/po-lin.md](.
 
 | File | Role | Status |
 | --- | --- | --- |
-| `config.py` | Paths, U1 column scope, flag/reason vocabularies | scaffolding |
-| `run_pipeline.py` | Entry point; runs stages in order | skeleton |
+| `config.py` | Paths, controlled vocabularies, cleaning rules as constants | done |
+| `cleaning_utils.py` | Pure value-level cleaners; each returns a value plus the operations applied | done |
+| `provenance.py` | Log accumulation, change capture, stage snapshots, `cleaning_log.csv` rollup | done |
+| `clean_menu.py` | 4.1 identifiers, 4.3 date split, 4.4 currency, status drop — 4 stages | done |
+| `clean_menu_page.py` | 4.1 identifiers — 1 stage | done |
+| `clean_dish.py` | 4.1 identifiers, 4.2 `name` normalization, 4.5 prices + outlier capping — 4 stages | done |
+| `clean_menu_item.py` | 4.1 identifiers, 4.5 prices + outlier capping, 4.7 omit check — 4 stages | done |
+| `run_pipeline.py` | Entry point; runs the four chains then rolls up the log | done |
 
-To be written — one cleaner per table (S3 step 4), plus profiling:
+Not part of the pipeline:
+
+| File | Role |
+| --- | --- |
+| `lint_workflow.py` | Development aid — checks the YesWorkflow annotations for faults YesWorkflow itself reports no error for. Only needed when editing annotations; reproducing the data set does not run it |
+
+Still to be written:
 
 | File | Handles | Owner |
 | --- | --- | --- |
 | `profile_raw.py` | S2 — per-column counts backing the before/after table | Charlene `[CharleneKhun]` |
-| `clean_menu.py` | 4.3 dates (`cleaned_year`), 4.4 currency (`currency_clean`), status enum | Po `[PoLin]` |
-| `clean_menu_page.py` | 4.1 identifiers, dangling `menu_id` flags | Po `[PoLin]` |
-| `clean_dish.py` | 4.2 `name` normalization, 4.5 price fields | Po `[PoLin]` |
-| `clean_menu_item.py` | 4.5 prices, 4.6 fallback pricing (`clean_price_candidate`, `price_source`) | Po `[PoLin]` |
+
+Step 4.6 fallback pricing (`clean_price_candidate`, `price_source`) is **not** implemented here.
+It needs MenuItem joined to Dish, so it belongs in SQL — see
+[../sql/](../sql/) and the rationale in [../docs/phase2-report.md](../docs/phase2-report.md) §1.2.
+
+## Running it
+
+```powershell
+python -m src.run_pipeline              # all four tables, then the log rollup
+python -m src.run_pipeline menu dish    # a subset
+python -m src.clean_dish                # one table, standalone
+```
+
+Output layout per table:
+
+```
+data/<table>/interim/func-<step>/    one directory per cleaning function:
+                                       <Table>_after_<step>.csv    full snapshot
+                                       <Table>_changes_<step>.csv  cell-level before/after
+                                       <Table>_summary_<step>.csv  counts per column/operation
+data/<table>/interim/cleaned/        <Table>_cleaned.csv — load-ready, provenance stripped
+data/reports/cleaning_log.csv        every stage summary concatenated
+```
+
+Adding a cleaning stage is one change: write the function, construct a
+`provenance.StepRecorder(table_key, "step-name")`, and call `recorder.write(frame)`. The run
+directory is created on first write — nothing to register in `config.py` and no placeholder to
+commit.
 
 ## Rules
 

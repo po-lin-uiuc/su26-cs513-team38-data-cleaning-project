@@ -45,11 +45,18 @@ Every member completes these for each assigned step:
 
 The "agreed repository location" referenced above:
 
+The `data/` tree is organized **by source table**, then by processing stage, so any value can be
+traced back to the file and row it came from. `<table>` is one of `menu`, `menu-page`,
+`menu-item`, `dish`.
+
 | Artifact | Location |
 | --- | --- |
-| Raw data (never modified) | `data/raw/` |
-| Cleaned CSVs, cleaning log | `data/interim/` |
-| `final_menu.csv`, `final_item.csv` | `data/final/` |
+| Raw data (never modified) | `data/<table>/raw/` |
+| OpenRefine exports | `data/<table>/interim/open-refine/` |
+| Per-stage snapshots, change logs, summaries | `data/<table>/interim/func-<step>/` |
+| Load-ready CSVs for SQLite | `data/<table>/interim/cleaned/` |
+| `cleaning_log.csv` | `data/reports/` |
+| `final_menu.csv`, `final_item.csv` | `data/final/` (SQL workflow only — no per-table `final/`) |
 | Validation outputs, violation exports, excluded records | `data/reports/` |
 | Python scripts | `src/` |
 | Notebooks | `notebooks/` |

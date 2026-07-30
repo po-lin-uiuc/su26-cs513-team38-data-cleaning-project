@@ -1,0 +1,48 @@
+// W2 — inner cleaning workflow: the outer frame.
+//
+// YesWorkflow treats its source-file arguments as ONE concatenated stream, so a
+// block opened in the first file is closed from the last. This file carries only
+// the opening marker and the workflow's external ports; the four per-table
+// blocks in src/clean_*.py nest inside it, and src/run_pipeline.py closes it.
+//
+// The frame lives here rather than in run_pipeline.py because it has to appear
+// BEFORE the cleaning modules in the stream. With the opening marker in
+// run_pipeline.py the workflow closed before the modules were read, and YW
+// rendered a 6-node graph containing none of the cleaning chains -- reporting
+// no error at all.
+//
+// Never write the YesWorkflow begin or end keywords in prose. YesWorkflow scans
+// for them loosely, so a keyword mentioned inside an ordinary sentence is parsed
+// as a real annotation and silently opens a duplicate block. That mistake cost
+// a debugging cycle here.
+//
+// FILE ORDER IS SIGNIFICANT. Render with:
+//
+//   java -jar yesworkflow.jar graph `
+//     workflow/W2_frame.yw `
+//     src/clean_menu.py src/clean_menu_page.py src/clean_dish.py src/clean_menu_item.py `
+//     src/run_pipeline.py `
+//     -c "extract.comment=#" -c graph.view=combined > workflow/W2.gv
+//   dot -Tpdf workflow/W2.gv -o workflow/W2.pdf
+//
+// Note the -c "extract.comment=#" argument: without it YW reads Python
+// docstrings as the comment syntax and finds no annotations at all.
+//
+// Owner: Po Lin (Step 4)  [PoLin].
+
+# @begin cleaning_workflow_W2
+# @desc  Inner cleaning workflow: four independent per-table chains turning the
+# @desc  OpenRefine exports into CSVs ready for SQLite staging, plus the
+# @desc  machine-readable log of every rule application. The chains have
+# @desc  different lengths because each table runs only the rules its column
+# @desc  types require -- MenuPage needs one stage, Menu needs four.
+# @in    menu_or           @uri file:data/menu/interim/open-refine/Menu_OR.csv
+# @in    menu_page_or      @uri file:data/menu-page/interim/open-refine/MenuPage_OR.csv
+# @in    dish_or           @uri file:data/dish/interim/open-refine/Dish_OR.csv
+# @in    menu_item_or      @uri file:data/menu-item/interim/open-refine/MenuItem_OR.csv
+# @out   menu_cleaned      @uri file:data/menu/interim/cleaned/Menu_cleaned.csv
+# @out   menu_page_cleaned @uri file:data/menu-page/interim/cleaned/MenuPage_cleaned.csv
+# @out   dish_cleaned      @uri file:data/dish/interim/cleaned/Dish_cleaned.csv
+# @out   menu_item_cleaned @uri file:data/menu-item/interim/cleaned/MenuItem_cleaned.csv
+# @out   menu_item_omitted @uri file:data/menu-item/interim/func-omit-check/MenuItem_omitted.csv
+# @out   cleaning_log      @uri file:data/reports/cleaning_log.csv

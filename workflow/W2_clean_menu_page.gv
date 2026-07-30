@@ -1,0 +1,34 @@
+digraph Workflow {
+rankdir=TB
+fontname=Helvetica; fontsize=18; labelloc=t
+label="cleaning_workflow_W2.clean_menu_page"
+subgraph cluster_workflow_box_outer { label=""; color=black; penwidth=2
+subgraph cluster_workflow_box_inner { label=""; penwidth=0
+node[shape=box style=filled fillcolor="#CCFFCC" peripheries=1 fontname=Helvetica]
+clean_menu_page_identifiers [shape=record rankdir=LR label="{<f0> clean_menu_page_identifiers |<f1> Writes\: MenuPage_after_id-numeric.csv, MenuPage_summary_id-numeric.csv}"];
+write_menu_page_cleaned [shape=record rankdir=LR label="{<f0> write_menu_page_cleaned |<f1> Writes\: MenuPage_cleaned.csv}"];
+node[shape=box style="rounded,filled" fillcolor="#FFFFCC" peripheries=1 fontname=Helvetica]
+menu_page_cleaned [shape=record rankdir=LR label="{<f0> menu_page_cleaned |<f1> file\:data/menu-page/interim/cleaned/MenuPage_cleaned.csv}"];
+menu_page_or [shape=record rankdir=LR label="{<f0> menu_page_or |<f1> file\:data/menu-page/interim/open-refine/MenuPage_OR.csv}"];
+menu_page_ids [shape=record rankdir=LR label="{<f0> menu_page_ids |<f1> file\:data/menu-page/interim/func-id-numeric/MenuPage_after_id-numeric.csv}"];
+node[shape=box style="rounded,filled" fillcolor="#FCFCFC" peripheries=1 fontname=Helvetica]
+clean_menu_page_identifiers -> menu_page_ids
+menu_page_or -> clean_menu_page_identifiers
+NULL_LIKE_VALUES -> clean_menu_page_identifiers
+write_menu_page_cleaned -> menu_page_cleaned
+menu_page_ids -> write_menu_page_cleaned
+PROVENANCE_COLUMNS -> write_menu_page_cleaned
+}}
+subgraph cluster_input_ports_group_outer { label=""; penwidth=0
+subgraph cluster_input_ports_group_inner { label=""; penwidth=0
+node[shape=circle style="rounded,filled" fillcolor="#FFFFFF" peripheries=1 fontname=Helvetica width=0.2]
+menu_page_or_input_port [label=""]
+}}
+subgraph cluster_output_ports_group_outer { label=""; penwidth=0
+subgraph cluster_output_ports_group_inner { label=""; penwidth=0
+node[shape=circle style="rounded,filled" fillcolor="#FFFFFF" peripheries=1 fontname=Helvetica width=0.2]
+menu_page_cleaned_output_port [label=""]
+}}
+menu_page_or_input_port -> menu_page_or
+menu_page_cleaned -> menu_page_cleaned_output_port
+}

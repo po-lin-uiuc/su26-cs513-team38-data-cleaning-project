@@ -1,0 +1,55 @@
+digraph Workflow {
+rankdir=TB
+fontname=Helvetica; fontsize=18; labelloc=t
+label="cleaning_workflow_W2.clean_menu_item"
+subgraph cluster_workflow_box_outer { label=""; color=black; penwidth=2
+subgraph cluster_workflow_box_inner { label=""; penwidth=0
+node[shape=box style=filled fillcolor="#CCFFCC" peripheries=1 fontname=Helvetica]
+clean_menu_item_identifiers [shape=record rankdir=LR label="{<f0> clean_menu_item_identifiers |<f1> Writes\: MenuItem_after_id-numeric.csv}"];
+clean_menu_item_prices [shape=record rankdir=LR label="{<f0> clean_menu_item_prices |<f1> Writes\: MenuItem_after_price-decimal.csv}"];
+clean_menu_item_price_outliers [shape=record rankdir=LR label="{<f0> clean_menu_item_price_outliers |<f1> Writes\: MenuItem_after_price-outlier.csv, MenuItem_changes_price-outlier.csv}"];
+clean_menu_item_omit [shape=record rankdir=LR label="{<f0> clean_menu_item_omit |<f1> MenuItem_omitted.csv}"];
+write_menu_item_cleaned [shape=record rankdir=LR label="{<f0> write_menu_item_cleaned |<f1> Writes\: MenuItem_cleaned.csv}"];
+node[shape=box style="rounded,filled" fillcolor="#FFFFCC" peripheries=1 fontname=Helvetica]
+menu_item_cleaned [shape=record rankdir=LR label="{<f0> menu_item_cleaned |<f1> file\:data/menu-item/interim/cleaned/MenuItem_cleaned.csv}"];
+menu_item_omitted [shape=record rankdir=LR label="{<f0> menu_item_omitted |<f1> file\:data/menu-item/interim/func-omit-check/MenuItem_omitted.csv}"];
+menu_item_or [shape=record rankdir=LR label="{<f0> menu_item_or |<f1> file\:data/menu-item/interim/open-refine/MenuItem_OR.csv}"];
+menu_item_ids [shape=record rankdir=LR label="{<f0> menu_item_ids |<f1> file\:data/menu-item/interim/func-id-numeric/MenuItem_after_id-numeric.csv}"];
+menu_item_prices [shape=record rankdir=LR label="{<f0> menu_item_prices |<f1> file\:data/menu-item/interim/func-price-decimal/MenuItem_after_price-decimal.csv}"];
+menu_item_capped [shape=record rankdir=LR label="{<f0> menu_item_capped |<f1> file\:data/menu-item/interim/func-price-outlier/MenuItem_after_price-outlier.csv}"];
+menu_item_kept [shape=record rankdir=LR label="{<f0> menu_item_kept |<f1> file\:data/menu-item/interim/func-omit-check/MenuItem_after_omit-check.csv}"];
+node[shape=box style="rounded,filled" fillcolor="#FCFCFC" peripheries=1 fontname=Helvetica]
+clean_menu_item_identifiers -> menu_item_ids
+menu_item_or -> clean_menu_item_identifiers
+NULL_LIKE_VALUES -> clean_menu_item_identifiers
+clean_menu_item_prices -> menu_item_prices
+menu_item_ids -> clean_menu_item_prices
+PRICE_FORMAT -> clean_menu_item_prices
+PRICE_DECIMAL_PLACES -> clean_menu_item_prices
+clean_menu_item_price_outliers -> menu_item_capped
+menu_item_prices -> clean_menu_item_price_outliers
+WINSORIZE_UPPER_LIMIT -> clean_menu_item_price_outliers
+WINSORIZE_COLUMNS -> clean_menu_item_price_outliers
+clean_menu_item_omit -> menu_item_kept
+clean_menu_item_omit -> menu_item_omitted
+menu_item_capped -> clean_menu_item_omit
+NO_DISH_ID_AND_NO_PRICE -> clean_menu_item_omit
+write_menu_item_cleaned -> menu_item_cleaned
+menu_item_kept -> write_menu_item_cleaned
+PROVENANCE_COLUMNS -> write_menu_item_cleaned
+}}
+subgraph cluster_input_ports_group_outer { label=""; penwidth=0
+subgraph cluster_input_ports_group_inner { label=""; penwidth=0
+node[shape=circle style="rounded,filled" fillcolor="#FFFFFF" peripheries=1 fontname=Helvetica width=0.2]
+menu_item_or_input_port [label=""]
+}}
+subgraph cluster_output_ports_group_outer { label=""; penwidth=0
+subgraph cluster_output_ports_group_inner { label=""; penwidth=0
+node[shape=circle style="rounded,filled" fillcolor="#FFFFFF" peripheries=1 fontname=Helvetica width=0.2]
+menu_item_cleaned_output_port [label=""]
+menu_item_omitted_output_port [label=""]
+}}
+menu_item_or_input_port -> menu_item_or
+menu_item_cleaned -> menu_item_cleaned_output_port
+menu_item_omitted -> menu_item_omitted_output_port
+}

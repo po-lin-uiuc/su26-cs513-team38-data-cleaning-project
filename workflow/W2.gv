@@ -1,0 +1,69 @@
+digraph Workflow {
+rankdir=LR
+fontname=Helvetica; fontsize=18; labelloc=t
+label=cleaning_workflow_W2
+subgraph cluster_workflow_box_outer { label=""; color=black; penwidth=2
+subgraph cluster_workflow_box_inner { label=""; penwidth=0
+node[shape=box style=filled fillcolor="#CCFFCC" peripheries=1 fontname=Helvetica]
+collect_cleaning_log [shape=record rankdir=LR label="{{<f0> collect_cleaning_log |<f1> Writes\: cleaning_log.csv}}"];
+node[shape=box style=filled fillcolor="#CCFFCC" peripheries=2 fontname=Helvetica]
+clean_menu [shape=record rankdir=LR label="{{<f0> clean_menu |<f1> Writes\: Menu_cleaned.csv}}"];
+clean_menu_page [shape=record rankdir=LR label="{{<f0> clean_menu_page |<f1> Writes\: MenuPage_cleaned.csv}}"];
+clean_dish [shape=record rankdir=LR label="{{<f0> clean_dish |<f1> Writes\: Dish_cleaned.csv}}"];
+clean_menu_item [shape=record rankdir=LR label="{{<f0> clean_menu_item |<f1> Writes\: MenuItem_cleaned.csv, MenuItem_omitted.csv}}"];
+node[shape=box style="rounded,filled" fillcolor="#FFFFCC" peripheries=1 fontname=Helvetica]
+menu_cleaned [shape=record rankdir=LR label="{{<f0> menu_cleaned |<f1> file\:data/menu/interim/cleaned/Menu_cleaned.csv}}"];
+menu_page_cleaned [shape=record rankdir=LR label="{{<f0> menu_page_cleaned |<f1> file\:data/menu-page/interim/cleaned/MenuPage_cleaned.csv}}"];
+dish_cleaned [shape=record rankdir=LR label="{{<f0> dish_cleaned |<f1> file\:data/dish/interim/cleaned/Dish_cleaned.csv}}"];
+menu_item_cleaned [shape=record rankdir=LR label="{{<f0> menu_item_cleaned |<f1> file\:data/menu-item/interim/cleaned/MenuItem_cleaned.csv}}"];
+menu_item_omitted [shape=record rankdir=LR label="{{<f0> menu_item_omitted |<f1> file\:data/menu-item/interim/func-omit-check/MenuItem_omitted.csv}}"];
+cleaning_log [shape=record rankdir=LR label="{{<f0> cleaning_log |<f1> file\:data/reports/cleaning_log.csv}}"];
+menu_or [shape=record rankdir=LR label="{{<f0> menu_or |<f1> file\:data/menu/interim/open-refine/Menu_OR.csv}}"];
+menu_page_or [shape=record rankdir=LR label="{{<f0> menu_page_or |<f1> file\:data/menu-page/interim/open-refine/MenuPage_OR.csv}}"];
+dish_or [shape=record rankdir=LR label="{{<f0> dish_or |<f1> file\:data/dish/interim/open-refine/Dish_OR.csv}}"];
+menu_item_or [shape=record rankdir=LR label="{{<f0> menu_item_or |<f1> file\:data/menu-item/interim/open-refine/MenuItem_OR.csv}}"];
+node[shape=box style="rounded,filled" fillcolor="#FCFCFC" peripheries=1 fontname=Helvetica]
+clean_menu -> menu_cleaned
+menu_or -> clean_menu
+clean_menu_page -> menu_page_cleaned
+menu_page_or -> clean_menu_page
+clean_dish -> dish_cleaned
+dish_or -> clean_dish
+clean_menu_item -> menu_item_cleaned
+clean_menu_item -> menu_item_omitted
+menu_item_or -> clean_menu_item
+collect_cleaning_log -> cleaning_log
+menu_cleaned -> collect_cleaning_log
+menu_page_cleaned -> collect_cleaning_log
+dish_cleaned -> collect_cleaning_log
+menu_item_cleaned -> collect_cleaning_log
+}}
+subgraph cluster_input_ports_group_outer { label=""; penwidth=0
+subgraph cluster_input_ports_group_inner { label=""; penwidth=0
+node[shape=circle style="rounded,filled" fillcolor="#FFFFFF" peripheries=1 fontname=Helvetica width=0.2]
+menu_or_input_port [label=""]
+menu_page_or_input_port [label=""]
+dish_or_input_port [label=""]
+menu_item_or_input_port [label=""]
+}}
+subgraph cluster_output_ports_group_outer { label=""; penwidth=0
+subgraph cluster_output_ports_group_inner { label=""; penwidth=0
+node[shape=circle style="rounded,filled" fillcolor="#FFFFFF" peripheries=1 fontname=Helvetica width=0.2]
+menu_cleaned_output_port [label=""]
+menu_page_cleaned_output_port [label=""]
+dish_cleaned_output_port [label=""]
+menu_item_cleaned_output_port [label=""]
+menu_item_omitted_output_port [label=""]
+cleaning_log_output_port [label=""]
+}}
+menu_or_input_port -> menu_or
+menu_page_or_input_port -> menu_page_or
+dish_or_input_port -> dish_or
+menu_item_or_input_port -> menu_item_or
+menu_cleaned -> menu_cleaned_output_port
+menu_page_cleaned -> menu_page_cleaned_output_port
+dish_cleaned -> dish_cleaned_output_port
+menu_item_cleaned -> menu_item_cleaned_output_port
+menu_item_omitted -> menu_item_omitted_output_port
+cleaning_log -> cleaning_log_output_port
+}

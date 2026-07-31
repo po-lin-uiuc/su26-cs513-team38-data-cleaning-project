@@ -2,21 +2,17 @@
 
 killian7@illinois.edu
 
-> Search the repo for `[MadalynKillian]` to find every file waiting on you.
-
 Owns the SQLite staging layer, loading cleaned files, inclusion-dependency validation,
 violation exports and iteration coordination, and her portion of provenance and final export.
 
-Scripts live in [../../sql/](../../sql/); violation exports in `data/reports/`; the iteration
-log in [../iteration-log.md](../iteration-log.md).
-
-Also complete the [shared responsibilities](README.md#shared-responsibilities) for each step.
+Scripts live in [../../sql/](../../sql/);
+violation exports in `data/reports/`; 
 
 ---
 
 ## Step 1 — Collect raw datasets into a local repository (group activity)  [MadalynKillian] [Team]
 
-- [ ] Confirm access to all raw and cleaned data folders
+- [X] Confirm access to all raw and cleaned data folders
 - [x] Confirm SQLite database location — `data/cs513_team38.sqlite` (git-ignored)
 - [x] Confirm SQL script folder structure — [../../sql/](../../sql/)
 - [x] Confirm validation-output folder structure — `data/reports/`
@@ -29,12 +25,6 @@ Also complete the [shared responsibilities](README.md#shared-responsibilities) f
       stdlib `sqlite3` module reports its own via `sqlite3.sqlite_version`)
 - [ ] Confirm all team members can access or recreate the database
 
-> The database file itself is git-ignored — it is a build artifact. Reproducibility comes from
-> the DDL and load scripts, which **are** tracked. Anyone can recreate the database by running
-> `sql/01_schema_staging.sql` then `sql/02_load_staging.sql`.
-
----
-
 ## Step 5 — Define or revise the SQLite staging schema  [MadalynKillian]
 
 DDL goes in [../../sql/01_schema_staging.sql](../../sql/01_schema_staging.sql).
@@ -45,14 +35,14 @@ Create or revise: `stg_menu` · `stg_menu_page` · `stg_menu_item` · `stg_dish`
 
 ### Schema design
 
-- [ ] Match SQLite types to cleaned pandas outputs
+- [X] Match SQLite types to cleaned pandas outputs
 - [ ] Include raw and cleaned columns where needed
 - [ ] Include provenance columns
 - [ ] Include warning columns
 - [ ] Include exclusion columns
 - [ ] Include price-source fields
 - [ ] Include source-file and source-row fields
-- [ ] Define primary-key expectations
+- [X] Define primary-key expectations
 - [ ] Define not-null expectations
 - [ ] Define controlled-value checks where practical
 - [ ] Decide which constraints are enforced during load
@@ -63,13 +53,6 @@ Create or revise: `stg_menu` · `stg_menu_page` · `stg_menu_item` · `stg_dish`
       queries
 - [ ] Keep staging tables source-shaped rather than prematurely creating the final analysis model
 
-> **SQLite typing, briefly:** unlike PostgreSQL or MySQL, a classic SQLite table applies *type
-> affinity*, not type enforcement — inserting `'abc'` into an `INTEGER` column stores the
-> string rather than rejecting it. `STRICT` tables (SQLite 3.37+, `CREATE TABLE ... ) STRICT;`)
-> enforce the declared types instead. Note the tradeoff: an enforced constraint gives you a
-> failed insert, while a constraint checked afterward by query gives you a countable violation
-> — and Step 7 needs counts. That is the "which constraints are enforced during load vs.
-> checked afterward" decision the checklist asks you to make and justify.
 
 ### Schema review
 
@@ -107,17 +90,6 @@ For each file:
 - [ ] Explain every discrepancy
 - [ ] Save load command or script
 - [ ] Save load logs
-
-> Three SQLite `.import` traps worth knowing before you start:
-> 1. `.import` and `.mode` are sqlite3 **CLI** dot commands — they do not work through Python's
->    `sqlite3` module or any other driver, and the CLI is a separate download on Windows that
->    is not currently installed on this machine. Decide whether to install it or write the load
->    in Python, and document the choice.
-> 2. `.import` writes **empty strings, not NULL**, for blank CSV fields. A blank price becomes
->    `''`, which is not `NULL` and will pass a naive `IS NOT NULL` check.
-> 3. `.mode csv` must be set **before** `.import`, or embedded commas inside quoted dish names
->    will shift columns. `Dish.name` contains values like `", Raw, on Half Shell"` — this bites
->    silently if the mode is wrong.
 
 Post-load checks:
 

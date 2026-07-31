@@ -346,32 +346,72 @@ All land in `data/<table>/interim/cleaned/` rather than a shared directory.
 
 ## Step 7 — Functional dependency checks  [PoLin]
 
+Scope note: Po defines the check semantics; Madalyn executes them against the loaded staging
+database and produces the violation exports for Step 8.
+
 For each FD:
 
-- [ ] Assign a rule ID
-- [ ] State the FD in formal notation
-- [ ] Explain it in plain English
-- [ ] Write the SQL query
-- [ ] Run it against staging data
-- [ ] Export violating rows
-- [ ] Record violation counts
-- [ ] Explain whether violations require repair, warning, or exclusion
-- [ ] Add the query to `queries.txt`
+- [x] Assign a rule ID — FD-1…FD-7, plus R-1/R-2 for rejected candidates
+- [x] State the FD in formal notation
+- [x] Explain it in plain English
+- [x] Write the SQL query
+- [x] Run it against staging data — run against an in-memory SQLite build of the four cleaned
+      CSVs, all columns `TEXT`, under both load conventions: blanks as NULL (the precondition the
+      file states) and blanks as `''` (what an unconfigured `.import` produces). All 8 detail
+      queries plus the summary roll-up execute, and every count matches the pandas baseline under
+      the NULL load. The `''` load shifts FD-4 and R-2 by one each, which is why the precondition
+      is stated rather than assumed. **Still to be re-run by Madalyn against the real
+      `data/cs513_team38.sqlite`** once Step 5 lands — the counts in the file header are the
+      regression baseline for that run
+- [ ] Export violating rows — `[MadalynKillian]`, Step 8
+- [x] Record violation counts — baseline table in the header of `05_validate_fd.sql`
+- [x] Explain whether violations require repair, warning, or exclusion — DISPOSITION section
+- [x] Add the query to `queries.txt` — nothing to do by hand; `queries.txt` is generated from
+      `sql/0*.sql` at submission time, so the file is covered as soon as it exists
 
-Candidate FDs — write them in [../../sql/05_validate_fd.sql](../../sql/05_validate_fd.sql):
+Candidate FDs — written in [../../sql/05_validate_fd.sql](../../sql/05_validate_fd.sql). The
+column names below are the ones this checklist assumed in Phase I; the actual staging columns
+differ, and the rules were written against the real schema:
 
-- [ ] `Menu.id → cleaned_year, currency_clean, status_clean`
-- [ ] `MenuPage.id → menu_id`
-- [ ] `MenuItem.id → menu_page_id, dish_id, cleaned price fields`
-- [ ] `Dish.id → cleaned name, cleaned lowest price, cleaned highest price`
+- [x] `Menu.id → currency, year, month, day` — 0 violations. (`status` was dropped in Step 4 and
+      `date` was split into parts, so the assumed `cleaned_year`/`status_clean` do not exist)
+- [x] `MenuPage.id → menu_id` — 0 violations
+- [x] `MenuItem.id → menu_page_id, price, high_price, dish_id` — 0 violations
+- [x] `Dish.id → name, lowest_price, highest_price` — 0 violations
+
+One non-key FD was added beyond the Phase-I candidates. The four above are all key dependencies,
+and a key dependency that holds proves the load was clean while saying nothing about the data:
+
+- [x] `MenuItem.(menu_page_id, dish_id) → price` — 6,613 violating pairs over 14,131 rows.
+      Lines for the same dish on the same page must be all unpriced or all identically priced.
+      3,829 pairs are one price plus a blank (repairable, and reusable as an input to the SQL
+      price-grouping logic); 2,784 hold conflicting real prices and are not resolvable from `D`
+
+Two candidates were asserted, measured, and then **withdrawn** — kept as reports, not violations:
+
+- [x] `Dish.name → id` — withdrawn as an FD. 28,006 names over 72,177 rows (44,171 beyond the
+      first in each cluster, 11.2% of the table), rising from 34 on raw through 4,016 after
+      OpenRefine. Still the duplicate-detection metric for P1/P3, but reported rather than
+      asserted: the rows are duplicate dictionary entries, not a constraint violation.
+      Evidence that they *are* duplicates — `COLD ROAST BEEF` has 25 ids spanning 897 menus,
+      one id carrying 669 of them; a per-restaurant model would need ~897 ids. Evidence that
+      they are nonetheless harmless to U1 — those ids essentially never co-occur on a menu
+      (1 id-pair in ~300), so the price differences between them are differences *between*
+      menus, which is the variation U1 measures rather than an error
+- [x] `Dish.name → lowest_price, highest_price` — withdrawn entirely. Requiring same-named
+      dishes to agree on a price *range* is wrong under either reading of the table, since
+      merging duplicates would union the ranges rather than require equality
 
 Additional checks:
 
-- [ ] Identify IDs mapping to multiple conflicting cleaned values
-- [ ] Distinguish genuine FD violations from duplicate identical rows
-- [ ] Confirm final FD definitions match the actual staging schema
-- [ ] Compare violation counts across iterations
-- [ ] Provide Madalyn with FD violation exports for Step 8
+- [x] Identify IDs mapping to multiple conflicting cleaned values — zero across all four tables
+- [x] Distinguish genuine FD violations from duplicate identical rows — the key checks emit a
+      `disposition` column separating `fd_violation` from `duplicate_load`
+- [x] Confirm final FD definitions match the actual staging schema — done against the cleaned CSV
+      headers, which is what produced the column-name corrections noted above
+- [ ] Compare violation counts across iterations — needs a second iteration to exist
+- [ ] Provide Madalyn with FD violation exports for Step 8 — the queries are ready; the exports
+      come from her run
 
 Deliverables: FD SQL queries · FD rule descriptions · FD violation counts ·
 `validation_fd_results.csv` · FD section for `queries.txt` · FD before/after summary.

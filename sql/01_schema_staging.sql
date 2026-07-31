@@ -1,30 +1,5 @@
 -- S3 Step 5 — SQLite staging schema.
 -- Owner: Madalyn Killian  [MadalynKillian]
--- Checklist: docs/checklists/madalyn-killian.md  (Step 5)
---
--- Run:  sqlite3 data/cs513_team38.sqlite < sql/01_schema_staging.sql
---
--- WHAT THIS FILE MUST CONTAIN
---   CREATE TABLE for stg_menu, stg_menu_page, stg_menu_item, stg_dish, each with:
---     - the raw columns preserved
---     - the cleaned columns produced by Step 4 (see docs/data-dictionary.md)
---     - the provenance columns: cleaning_status, warning_reason,
---       exclusion_reason, source_file, source_row_num
---   Indexes supporting the Step 7 validation joins.
---
--- DESIGN DECISIONS TO MAKE AND RECORD (Step 5 narrative)
---   - Which constraints are enforced at load time vs. checked afterward by query.
---     A constraint enforced at load gives a failed insert; a constraint checked by
---     query gives a countable violation. Step 7 needs counts.
---   - Whether to declare staging tables STRICT. SQLite applies type *affinity*,
---     not enforcement, so an unSTRICT INTEGER column will happily store 'abc'.
---     STRICT (SQLite 3.37+) rejects it instead. Decide which behaviour serves the
---     validation layer, and justify the choice.
---   - Whether the cleaned CSVs land in TEXT tables first. SQLite's .import writes
---     '' rather than NULL for blank fields, and '' passes an IS NOT NULL check.
---   - Why staging is separate from the final operational tables.
---
--- Record every later revision in docs/iteration-log.md (schema revision log).
 
 PRAGMA foreign_keys = ON;
 

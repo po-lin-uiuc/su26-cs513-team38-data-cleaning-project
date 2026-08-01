@@ -17,7 +17,7 @@ if os.path.exists(DB_PATH):
     os.remove(DB_PATH)
 
 # run the schema script to create the staging tables (with PK/FK constraints)
-with open("01_schema_staging.sql", "r") as schema_file:
+with open("../sql/01_schema_staging.sql", "r") as schema_file:
     subprocess.run(
         ["sqlite3", DB_PATH],
         stdin=schema_file,
@@ -98,6 +98,8 @@ if ind_violations:
 else:
     combined = pd.DataFrame(columns=["IND_reason", "source_table"])
 combined.to_csv(VIOLATION_IND_PATH, index=False)
+
+
 print(f"\n{len(combined)} IND violations written to {VIOLATION_IND_PATH}")
- 
-print(f"Data loaded into {DB_PATH} successfully.")
+print(f"Cleaned data loaded into {DB_PATH} successfully.")
+print(f"IND violations loaded into {VIOLATION_IND_PATH} successfully.")

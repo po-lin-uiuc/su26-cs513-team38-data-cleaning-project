@@ -29,7 +29,7 @@ conn.execute("PRAGMA foreign_keys = ON;")
 
 ind_violations = []
 
-# combining all different voilations for csv
+# combining all different violations for csv
 def tag(df, IND_reason, source_table):
     df = df.copy()
     df.insert(0, "IND_reason", IND_reason)
@@ -53,7 +53,7 @@ orphaned = menu_page_df[orphaned_mask]
 
 # =====================================================================
 # IND-1: menu_id in table stg_menu_page MUST exist as an id in stg_menu
-# adding voilations to csv
+# adding violations to csv
 if len(orphaned):
     ind_violations.append(tag(orphaned, "IND-1", "stg_menu_page"))
     print(f"stg_menu_page: dropped {len(orphaned)} rows with menu_id not found in stg_menu")
@@ -68,7 +68,7 @@ orphaned = menu_item_df[orphaned_mask]
 
 # =====================================================================
 # IND-2: menu_page_id in table stg_menu_item MUST exist as an id in stg_menu_page
-#adding voilations to csv
+#adding violations to csv
 if len(orphaned):
     ind_violations.append(tag(orphaned, "IND-2", "stg_menu_item"))
     print(f"stg_menu_item: dropped {len(orphaned)} rows with menu_page_id not found in stg_menu_page")
@@ -80,7 +80,7 @@ orphaned = menu_item_df[orphaned_mask]
 
 # =====================================================================
 # IND-3: dish_id in table stg_menu_item MUST exist as an id in stg_dish
-#adding voilations to csv
+#adding violations to csv
 if len(orphaned):
     ind_violations.append(tag(orphaned, "IND-3", "stg_menu_item"))
     print(f"stg_menu_item: dropped {len(orphaned)} rows with dish_id not found in stg_dish")
@@ -99,7 +99,7 @@ else:
     combined = pd.DataFrame(columns=["IND_reason", "source_table"])
 combined.to_csv(VIOLATION_IND_PATH, index=False)
 
-
-print(f"\n{len(combined)} IND violations written to {VIOLATION_IND_PATH}")
 print(f"Cleaned data loaded into {DB_PATH} successfully.")
+
+print(f"\n\n{len(combined)} IND violations written to {VIOLATION_IND_PATH}")
 print(f"IND violations loaded into {VIOLATION_IND_PATH} successfully.")

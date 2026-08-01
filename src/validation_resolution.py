@@ -28,9 +28,11 @@ for sql_query in sql_commands:
 with open(VIOLATION_FD_PATH, 'w') as file:
     for violations in fd_violations:
         for violation in violations:
-            # print(violation)
             file.write(','.join(map(str, violation)) + '\n')
-            # break
-        # print(len(violations))
-        # break
-        # file.write(','.join(map(str, row)) + '\n')
+
+
+# FD-4: 
+# option 1: for the price and blank, go through and drop all of the dupes where price is blank, could be iterativly innificient
+# for conflicting prices, make an average.
+
+# no instances of fd1,2,3
